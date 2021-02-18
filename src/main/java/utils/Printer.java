@@ -10,7 +10,7 @@ public class Printer {
     }
 
     public void printLogin() {
-        System.out.println("Introduce your credentials");
+        System.out.println("Introduce your credentials:");
     }
 
     public void printRegisterMessage() {
@@ -26,6 +26,18 @@ public class Printer {
         System.out.println("1 - Veterinary");
         System.out.println("2 - Auxiliar");
         System.out.println("3 - Administrator");
+    }
+
+    public void printMainMenu() {
+        System.out.println("What do you want to do: ");
+        System.out.println("1 - Consult records");
+        System.out.println("2 - Register a record");
+        System.out.println("3 - Unsubscribe a record");
+        System.out.println("4 - Edit a record");
+        System.out.println("5 - Register an user");
+        System.out.println("6 - Unsubscribe an user");
+        System.out.println("7 - Edit a user");
+        System.out.println("8 - Consult a User");
     }
 
 }

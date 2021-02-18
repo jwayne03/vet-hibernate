@@ -33,23 +33,7 @@ public class Hibernate {
         this.transaction = this.session.beginTransaction();
     }
 
-    public List<User> selectAllUser() {
-        return this.session.createQuery("FROM User ", User.class).getResultList();
-    }
 
-    public void registerUser(String name, String surname, String dni, String tuition, String password,
-                             int type, Date lastaccess) {
-        User user = new User();
-        user.setName(name);
-        user.setSurname(surname);
-        user.setDni(dni);
-        user.setPersonal_tuition(tuition);
-        user.setPassword(password);
-        user.setUserType(type);
-        user.setLastaccess(lastaccess);
-        session.save(user);
-        transaction.commit();
-    }
 
     public StandardServiceRegistryBuilder getServiceRegistryBuilder() {
         return serviceRegistryBuilder;
