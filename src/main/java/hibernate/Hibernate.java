@@ -1,5 +1,6 @@
 package hibernate;
 
+import model.Expedient;
 import model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,15 +26,13 @@ public class Hibernate {
         this.serviceRegistryBuilder = new StandardServiceRegistryBuilder();
         this.configuration = new Configuration()
                 .configure()
-                .addAnnotatedClass(User.class);
+                .addAnnotatedClass(User.class).addAnnotatedClass(Expedient.class);
         this.serviceRegistryBuilder.applySettings(configuration.getProperties());
         this.serviceRegistry = serviceRegistryBuilder.build();
         this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         this.session = sessionFactory.openSession();
         this.transaction = this.session.beginTransaction();
     }
-
-
 
     public StandardServiceRegistryBuilder getServiceRegistryBuilder() {
         return serviceRegistryBuilder;

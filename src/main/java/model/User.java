@@ -105,4 +105,18 @@ public class User {
     public void setLastaccess(Date lastaccess) {
         this.lastaccess = lastaccess;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", dni='" + dni + '\'' +
+                ", personal_tuition='" + personal_tuition + '\'' +
+                ", password='" + password + '\'' +
+                ", userType=" + userType +
+                ", lastaccess=" + lastaccess +
+                '}';
+    }
 }

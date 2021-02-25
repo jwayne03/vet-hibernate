@@ -22,6 +22,8 @@ public class Manager {
     private AuxiliarManager auxiliarManager;
     private VetManager vetManager;
 
+    private boolean exit;
+
     private Manager() {
         this.personORM = new PersonORM();
         this.hibernate = new Hibernate();
@@ -31,6 +33,7 @@ public class Manager {
         this.adminManager = new AdminManager();
         this.auxiliarManager = new AuxiliarManager();
         this.vetManager = new VetManager();
+        this.exit = false;
     }
 
     public static Manager getInstance() {
@@ -44,29 +47,17 @@ public class Manager {
     }
 
     private void login() {
-        boolean exit = false;
 
         while (!exit) {
             try {
                 String user = worker.askString("Introduce your user: ");
                 String password = worker.askString("Introduce your password");
                 User user1 = checkUser(user, password);
-                int x = checkType();
-                System.out.println(user1.getUserType());
-                profile(user1.getUserType());
+                profile(user1.getUserType(), user1.getId());
             } catch (MyException e) {
                 System.out.println(e.getMessage());
             }
         }
-    }
-
-    private int checkType() {
-        for (User user : this.users) {
-            if (user.getUserType() == 1 || user.getUserType() == 2 || user.getUserType() == 3) {
-                return user.getUserType();
-            }
-        }
-        return 0;
     }
 
     private User checkUser(String username, String password) throws MyException {
@@ -78,7 +69,7 @@ public class Manager {
         throw new MyException(MyException.USER_PASS_INCORRECT);
     }
 
-    private void profile(int type) {
+    private void profile(int type, int userId) {
         switch (type) {
             case 1:
                 this.auxiliarManager.mainmenu();
@@ -87,7 +78,7 @@ public class Manager {
                 this.vetManager.mainmenu();
                 break;
             case 3:
-                this.adminManager.mainmenu(this.users);
+                this.adminManager.mainmenu(this.users, this.exit, userId);
                 break;
         }
     }

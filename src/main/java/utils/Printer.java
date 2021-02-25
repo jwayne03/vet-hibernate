@@ -38,6 +38,10 @@ public class Printer {
         System.out.println("6 - Unsubscribe an user");
         System.out.println("7 - Edit a user");
         System.out.println("8 - Consult a User");
+        System.out.println("0 - Exit");
     }
 
+    public void printExit() {
+        System.out.println("You choose to exit. Goodbye!");
+    }
 }

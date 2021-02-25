@@ -13,8 +13,10 @@ public class PersonORM {
     }
 
     public List<User> selectAllPeople() {
-        return this.hibernate.getSession()
-                .createQuery("FROM User", User.class)
-                .getResultList();
+        return this.hibernate.getSession().createQuery("FROM User", User.class).getResultList();
+    }
+
+    public void deletePerson() {
+
     }
 }

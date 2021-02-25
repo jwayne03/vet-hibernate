@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "expedientes")
@@ -17,14 +18,14 @@ public class Expedient {
     private String surname;
     @Column(name = "dni")
     private String dni;
-    @Column(name = "nmascotas")
-    private int numberOfPets;
-    @Column(name = "fechaalta")
-    private String date;
     @Column(name = "cp")
     private String postalCode;
+    @Column(name = "fechaalta")
+    private Date date;
     @Column(name = "telefono")
     private int phone;
+    @Column(name = "nmascotas")
+    private int numberOfPets;
     @Column(name = "usuarioalta")
     private int id_user_up;
 
@@ -32,7 +33,7 @@ public class Expedient {
 
     }
 
-    public Expedient(int id, String name, String surname, String dni, int numberOfPets, String date, String postalCode,
+    public Expedient(int id, String name, String surname, String dni, int numberOfPets, Date date, String postalCode,
                      int phone, int id_user_up) {
         this.id = id;
         this.name = name;
@@ -45,7 +46,7 @@ public class Expedient {
         this.id_user_up = id_user_up;
     }
 
-    @Id
+//    @Id
     public int getId() {
         return id;
     }
@@ -86,11 +87,11 @@ public class Expedient {
         this.numberOfPets = numberOfPets;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
