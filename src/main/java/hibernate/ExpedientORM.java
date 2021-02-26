@@ -32,7 +32,6 @@ public class ExpedientORM {
         expedient.setPostalCode(postalCode);
         expedient.setPhone(phone);
         expedient.setId_user_up(id_user_up);
-        System.out.println();
         this.hibernate.getSession().save(expedient);
         this.hibernate.getTransaction().commit();
     }

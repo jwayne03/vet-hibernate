@@ -2,6 +2,7 @@ package manager;
 
 import exception.MyException;
 import hibernate.ExpedientORM;
+import hibernate.PersonORM;
 import model.Expedient;
 import model.User;
 import utils.Printer;
@@ -15,23 +16,24 @@ public class AdminManager {
 
     private final Printer printer;
     private final Worker worker;
-    private ExpedientORM expedientORM;
+    private final ExpedientORM expedientORM;
+    private final PersonORM personORM;
 
-    private List<Expedient> expedients;
+    private final List<Expedient> expedients;
 
     public AdminManager() {
         this.expedientORM = new ExpedientORM();
-//        this.expedients = new ArrayList<>();
+        this.personORM = new PersonORM();
         this.expedients = this.expedientORM.selectAllExpedients();
         this.printer = new Printer();
         this.worker = new Worker();
     }
 
     public void mainmenu(List<User> users, boolean exit, int userId) {
-        try {
-            while (!exit) {
+        while (!exit) {
+            try {
                 this.printer.printMainMenu();
-                switch (worker.askInt("Introduce an option: ")) {
+                switch (this.worker.askInt("Introduce an option: ")) {
                     case 1:
                         this.consultRecords(users);
                         break;
@@ -45,7 +47,7 @@ public class AdminManager {
                         this.editRecord();
                         break;
                     case 5:
-                        this.registerUser();
+                        this.registerUser(users);
                         break;
                     case 6:
                         this.unsubscribeUser();
@@ -63,9 +65,9 @@ public class AdminManager {
                         this.printer.printNeedToIntroduceAnOption();
                         break;
                 }
+            } catch (MyException e) {
+                System.out.println(e.getMessage());
             }
-        } catch (MyException e) {
-            System.out.println(e.getMessage());
         }
     }
 
@@ -100,12 +102,16 @@ public class AdminManager {
         this.expedientORM.insertExpedient(0, name, surname, dni, numberOfPets, date, postalcode, phone, userId);
     }
 
-    private void unsubscribeRecord() throws MyException {
+    private void showRecords() {
         AtomicInteger counter = new AtomicInteger(1);
         this.expedients.forEach(expedient -> {
             System.out.println(counter + " - " + expedient.toString());
             counter.getAndIncrement();
         });
+    }
+
+    private void unsubscribeRecord() throws MyException {
+        this.showRecords();
         System.out.println("What expedient do you want to unsubscribe? ");
         int option = worker.askInt("Introdice the expedient do you want to remove: ");
         this.isExpedientExist(option);
@@ -131,23 +137,25 @@ public class AdminManager {
         }
     }
 
+    // TODO
     private void editRecord() {
 
     }
 
-    private void registerUser() {
+    private void registerUser(List<User> users) {
         System.out.println("Register user");
-        int id = worker.askInt("Introduce the id of the user");
         String name = worker.askString("Introduce the name of the user");
         String surname = worker.askString("Introduce the surname of the user");
         String password = worker.askString("Introduce the password:");
+        String dni = worker.askString("Introduce the DNI");
         String tuition = worker.askString("Introduce your tuition");
         int type = worker.askInt("Introduce the type of the user");
-//        int year = worker.askInt("Introduce the day");
-//        int month = worker.askInt("Introduce the month");
-//        int day = worker.askInt("Introduce the day");
-//        Date date = new Date(year,month,day);
+        this.addUser(users, name, surname, password, dni, tuition, type);
+    }
 
+    private void addUser(List<User> users, String name, String surname, String password, String dni, String tuition, int type) {
+        this.personORM.insertNewUser(0, name, surname, password, dni, tuition, type, null);
+        users.add(new User(0, name, surname, password, dni, tuition, type, null));
     }
 
     private void unsubscribeUser() {

@@ -47,7 +47,6 @@ public class Manager {
     }
 
     private void login() {
-
         while (!exit) {
             try {
                 String user = worker.askString("Introduce your user: ");
