@@ -8,10 +8,6 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import utils.UserType;
-
-import java.util.Date;
-import java.util.List;
 
 public class Hibernate {
 
@@ -26,7 +22,8 @@ public class Hibernate {
         this.serviceRegistryBuilder = new StandardServiceRegistryBuilder();
         this.configuration = new Configuration()
                 .configure()
-                .addAnnotatedClass(User.class).addAnnotatedClass(Expedient.class);
+                .addAnnotatedClass(User.class)
+                .addAnnotatedClass(Expedient.class);
         this.serviceRegistryBuilder.applySettings(configuration.getProperties());
         this.serviceRegistry = serviceRegistryBuilder.build();
         this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);

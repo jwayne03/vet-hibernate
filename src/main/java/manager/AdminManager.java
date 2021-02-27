@@ -50,7 +50,7 @@ public class AdminManager {
                         this.registerUser(users);
                         break;
                     case 6:
-                        this.unsubscribeUser();
+                        this.unsubscribeUser(users);
                         break;
                     case 7:
                         this.editUser();
@@ -73,11 +73,17 @@ public class AdminManager {
 
     private void consultRecords(List<User> users) {
         System.out.println("Information about the users registered");
-        users.forEach(user -> System.out.println(user.getId() + " " + user.getName() + " " + user.getSurname()));
+        users.forEach(user -> System.out.println("ID --> " + user.getId() + " " + user.getName() + " " + user.getSurname()));
         int id = worker.askInt("Introduce the id of the user do you want to consult: ");
-        users.forEach(user -> {
-            if (user.getId() == id) System.out.println(user.toString());
-        });
+
+        for (User user : users) {
+            if (user.getId() == users.get(id - 1).getId()) {
+                System.out.println(user.toString());
+            } else {
+                System.out.println("This expedient doesn't exist");
+                return;
+            }
+        }
     }
 
     //TODO: fix the transaction
@@ -158,8 +164,27 @@ public class AdminManager {
         users.add(new User(0, name, surname, password, dni, tuition, type, null));
     }
 
-    private void unsubscribeUser() {
+    private void unsubscribeUser(List<User> users) throws MyException {
+        int count = 1;
+        for (User user : users) System.out.println(count++ + " - " + user.toString());
+        int option = worker.askInt("What user do you want to delete?");
+        this.removeUser(users, option);
+    }
 
+    // TODO: delete user and if has an expedient give to the person who registered that user
+    private void removeUser(List<User> users, int option) throws MyException {
+        for (User user : users) {
+            if (option <= 0) throw new MyException(MyException.WRONG_OPTION);
+            if (option < users.size()) {
+                if (user.getId() == users.get(option - 1).getId()) {
+                    for (Expedient expedient : this.expedients) {
+                        if (user.getId() == expedient.getId_user_up()) {
+                            System.out.println(user.getId());
+                        }
+                    }
+                }
+            } else throw new MyException(MyException.WRONG_OPTION);
+        }
     }
 
     private void editUser() {

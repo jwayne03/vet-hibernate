@@ -7,6 +7,7 @@ public class MyException extends Exception {
 
     public static final int USER_PASS_INCORRECT = 0;
     public static final int THIS_EXPEDIENT_DOESNT_EXIST = 1;
+    public static final int WRONG_OPTION = 2;
 
     private final int value;
 
@@ -16,7 +17,9 @@ public class MyException extends Exception {
 
     private final List<String> message = Arrays.asList(
             "Username or password incorrect",
-            "This expedient doesn't exist"
+            "This expedient doesn't exist",
+            "Wrong option, please chose someone where is in the range",
+            "This user doesn't have expedients registered"
     );
 
     @Override

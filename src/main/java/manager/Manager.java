@@ -18,9 +18,9 @@ public class Manager {
     private final Hibernate hibernate;
     private final PersonORM personORM;
 
-    private AdminManager adminManager;
-    private AuxiliarManager auxiliarManager;
-    private VetManager vetManager;
+    private final AdminManager adminManager;
+    private final AuxiliarManager auxiliarManager;
+    private final VetManager vetManager;
 
     private boolean exit;
 
@@ -52,7 +52,7 @@ public class Manager {
                 String user = worker.askString("Introduce your user: ");
                 String password = worker.askString("Introduce your password");
                 User user1 = checkUser(user, password);
-                profile(user1.getUserType(), user1.getId());
+                this.profile(user1.getUserType(), user1.getId());
             } catch (MyException e) {
                 System.out.println(e.getMessage());
             }
@@ -71,7 +71,7 @@ public class Manager {
     private void profile(int type, int userId) {
         switch (type) {
             case 1:
-                this.auxiliarManager.mainmenu();
+//                this.auxiliarManager.mainmenu(this.users);
                 break;
             case 2:
                 this.vetManager.mainmenu();
