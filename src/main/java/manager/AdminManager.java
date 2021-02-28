@@ -53,10 +53,10 @@ public class AdminManager {
                         this.unsubscribeUser(users);
                         break;
                     case 7:
-                        this.editUser();
+                        this.editUser(users);
                         break;
                     case 8:
-                        this.consultUser();
+                        this.consultUser(users);
                         break;
                     case 0:
                         this.printer.printExit();
@@ -71,22 +71,22 @@ public class AdminManager {
         }
     }
 
-    private void consultRecords(List<User> users) {
+    private void consultRecords(List<User> users) throws MyException {
         System.out.println("Information about the users registered");
-        users.forEach(user -> System.out.println("ID --> " + user.getId() + " " + user.getName() + " " + user.getSurname()));
-        int id = worker.askInt("Introduce the id of the user do you want to consult: ");
+        users.forEach(user -> System.out.println("ID --> [" + user.getId() + "] " + user.getName() + " " + user.getSurname()));
+        int option = worker.askInt("Introduce the id of the user do you want to consult: ");
+        this.showRecords(users, option);
+    }
 
+    private void showRecords(List<User> users, int option) throws MyException {
         for (User user : users) {
-            if (user.getId() == users.get(id - 1).getId()) {
+            if (option <= 0 || option > users.size()) throw new MyException(MyException.WRONG_OPTION);
+            if (users.get(option - 1).getId() == user.getId()) {
                 System.out.println(user.toString());
-            } else {
-                System.out.println("This expedient doesn't exist");
-                return;
             }
         }
     }
 
-    //TODO: fix the transaction
     private void registerRecord(int userId) {
         System.out.println(userId);
         String name = worker.askString("Introduce your name:");
@@ -144,24 +144,41 @@ public class AdminManager {
     }
 
     // TODO
-    private void editRecord() {
+    private void editRecord() throws MyException {
+        AtomicInteger count = new AtomicInteger(1);
+        System.out.println("Edit record");
+        if (this.expedients.isEmpty()) throw new MyException(MyException.NO_EXPEDIENTS_AVAILABLE);
+        else this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toString()));
+        int option = worker.askInt("What expedient do you want to update?");
+        this.isExpedientExist(option);
+        this.updateExpedient(option);
+    }
 
+    private void updateExpedient(int option) {
+        for (Expedient expedient : this.expedients) {
+            if (this.expedients.get(option - 1).getId() == expedient.getId()) {
+                int numberOfPets = worker.askInt("Introduce your number of pets");
+                int phone = worker.askInt("Introduce your phone number:");
+                String postalCode = worker.askString("Introduce your postal code:");
+                this.expedientORM.updateExpedient(numberOfPets, phone, postalCode);
+            }
+        }
     }
 
     private void registerUser(List<User> users) {
         System.out.println("Register user");
         String name = worker.askString("Introduce the name of the user");
         String surname = worker.askString("Introduce the surname of the user");
-        String password = worker.askString("Introduce the password:");
         String dni = worker.askString("Introduce the DNI");
         String tuition = worker.askString("Introduce your tuition");
+        String password = worker.askString("Introduce the password:");
         int type = worker.askInt("Introduce the type of the user");
-        this.addUser(users, name, surname, password, dni, tuition, type);
+        this.addUser(users, name, surname, dni, tuition, password, type);
     }
 
-    private void addUser(List<User> users, String name, String surname, String password, String dni, String tuition, int type) {
-        this.personORM.insertNewUser(0, name, surname, password, dni, tuition, type, null);
-        users.add(new User(0, name, surname, password, dni, tuition, type, null));
+    private void addUser(List<User> users, String name, String surname, String dni, String tuition, String password, int type) {
+        this.personORM.insertNewUser(users.size() + 1, name, surname, dni, tuition, password, type, null);
+        users.add(new User(users.size() + 1, name, surname, dni, tuition, password, type, null));
     }
 
     private void unsubscribeUser(List<User> users) throws MyException {
@@ -174,24 +191,27 @@ public class AdminManager {
     // TODO: delete user and if has an expedient give to the person who registered that user
     private void removeUser(List<User> users, int option) throws MyException {
         for (User user : users) {
-            if (option <= 0) throw new MyException(MyException.WRONG_OPTION);
-            if (option < users.size()) {
-                if (user.getId() == users.get(option - 1).getId()) {
-                    for (Expedient expedient : this.expedients) {
-                        if (user.getId() == expedient.getId_user_up()) {
-                            System.out.println(user.getId());
-                        }
+            if (option <= 0 || option > users.size()) throw new MyException(MyException.WRONG_OPTION);
+            if (users.get(option - 1).getId() == user.getId()) {
+                for (Expedient expedient : this.expedients) {
+                    if (user.getId() == expedient.getId_user_up()) {
+                        System.out.println(user.toString());
+                    } else {
+                        System.out.println(user.toString());
                     }
                 }
-            } else throw new MyException(MyException.WRONG_OPTION);
+            }
         }
     }
 
-    private void editUser() {
+    // TODO
+    private void editUser(List<User> users) {
+        users.forEach(user -> System.out.println("ID --> [" + user.getId() + "] " + user.getName() + " " + user.getSurname()));
 
     }
 
-    private void consultUser() {
+    //TODO
+    private void consultUser(List<User> users) {
 
     }
 }

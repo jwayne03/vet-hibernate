@@ -8,11 +8,9 @@ import java.util.List;
 public class ExpedientORM {
 
     private final Hibernate hibernate;
-//    private final Expedient expedient;
 
     public ExpedientORM() {
         this.hibernate = new Hibernate();
-//        this.expedient = new Expedient();
     }
 
     public List<Expedient> selectAllExpedients() {
@@ -38,5 +36,14 @@ public class ExpedientORM {
 
     public void deleteExpedient() {
 
+    }
+
+    public void updateExpedient(int numberOfPets, int phone, String postalCode) {
+        Expedient expedient = new Expedient();
+        expedient.setNumberOfPets(numberOfPets);
+        expedient.setPhone(phone);
+        expedient.setPostalCode(postalCode);
+        this.hibernate.getSession().update(expedient);
+        this.hibernate.getTransaction().commit();
     }
 }
