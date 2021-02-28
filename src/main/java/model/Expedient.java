@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "expedientes")
@@ -132,5 +133,9 @@ public class Expedient {
                 ", phone=" + phone +
                 ", id_user_up=" + id_user_up +
                 '}';
+    }
+
+    public String toStringIdNameSurname() {
+        return  "ID = " + id + " Name = " + name + " Surname = " + surname;
     }
 }

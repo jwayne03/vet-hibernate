@@ -35,7 +35,7 @@ public class AdminManager {
                 this.printer.printMainMenu();
                 switch (this.worker.askInt("Introduce an option: ")) {
                     case 1:
-                        this.consultRecords(users);
+                        this.consultRecords();
                         break;
                     case 2:
                         this.registerRecord(userId);
@@ -71,18 +71,20 @@ public class AdminManager {
         }
     }
 
-    private void consultRecords(List<User> users) throws MyException {
-        System.out.println("Information about the users registered");
-        users.forEach(user -> System.out.println("ID --> [" + user.getId() + "] " + user.getName() + " " + user.getSurname()));
-        int option = worker.askInt("Introduce the id of the user do you want to consult: ");
-        this.showRecords(users, option);
+    private void consultRecords() throws MyException {
+        AtomicInteger count = new AtomicInteger(1);
+        System.out.println("What record do you want to consult?");
+        this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toStringIdNameSurname()));
+        int option = worker.askInt("What expedient do you want to see?");
+
+        this.showExpedient(option);
     }
 
-    private void showRecords(List<User> users, int option) throws MyException {
-        for (User user : users) {
-            if (option <= 0 || option > users.size()) throw new MyException(MyException.WRONG_OPTION);
-            if (users.get(option - 1).getId() == user.getId()) {
-                System.out.println(user.toString());
+    private void showExpedient(int option) throws MyException {
+        if (option <= 0 || option > this.expedients.size()) throw new MyException(MyException.WRONG_OPTION);
+        for (Expedient expedient : this.expedients) {
+            if (this.expedients.get(option - 1).getId() == expedient.getId()) {
+                System.out.println(expedient.toString());
             }
         }
     }
@@ -106,9 +108,10 @@ public class AdminManager {
     private void addRecord(int userId, String name, String surname, String dni, int numberOfPets, Date date, int phone, String postalcode) {
         this.expedients.add(new Expedient(0, name, surname, dni, numberOfPets, date, postalcode, phone, userId));
         this.expedientORM.insertExpedient(0, name, surname, dni, numberOfPets, date, postalcode, phone, userId);
+        System.out.println("The record has been registered successfully");
     }
 
-    private void showRecords() {
+    private void showUsers() {
         AtomicInteger counter = new AtomicInteger(1);
         this.expedients.forEach(expedient -> {
             System.out.println(counter + " - " + expedient.toString());
@@ -117,7 +120,7 @@ public class AdminManager {
     }
 
     private void unsubscribeRecord() throws MyException {
-        this.showRecords();
+        this.showUsers();
         System.out.println("What expedient do you want to unsubscribe? ");
         int option = worker.askInt("Introdice the expedient do you want to remove: ");
         this.isExpedientExist(option);
@@ -125,13 +128,14 @@ public class AdminManager {
         this.removeExpedient(option);
     }
 
-    private void isExpedientExist(int option) throws MyException {
+    private boolean isExpedientExist(int option) throws MyException {
         for (Expedient expedient : this.expedients) {
             if (expedient.getId() == this.expedients.get(option - 1).getId()) {
                 System.out.println(this.expedients.get(option - 1));
-                return;
-            } else throw new MyException(MyException.THIS_EXPEDIENT_DOESNT_EXIST);
+                return true;
+            }
         }
+        throw new MyException(MyException.THIS_EXPEDIENT_DOESNT_EXIST);
     }
 
     private void removeExpedient(int option) throws MyException {
@@ -148,22 +152,22 @@ public class AdminManager {
         AtomicInteger count = new AtomicInteger(1);
         System.out.println("Edit record");
         if (this.expedients.isEmpty()) throw new MyException(MyException.NO_EXPEDIENTS_AVAILABLE);
-        else this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toString()));
+        else
+            this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toString()));
         int option = worker.askInt("What expedient do you want to update?");
         this.isExpedientExist(option);
-        this.updateExpedient(option);
+        this.checkExpedient(option);
     }
 
-    private void updateExpedient(int option) {
+    private boolean checkExpedient(int option) throws MyException {
         for (Expedient expedient : this.expedients) {
             if (this.expedients.get(option - 1).getId() == expedient.getId()) {
-                int numberOfPets = worker.askInt("Introduce your number of pets");
-                int phone = worker.askInt("Introduce your phone number:");
-                String postalCode = worker.askString("Introduce your postal code:");
-                this.expedientORM.updateExpedient(numberOfPets, phone, postalCode);
+                return true;
             }
         }
+        throw new MyException(MyException.WRONG_OPTION);
     }
+
 
     private void registerUser(List<User> users) {
         System.out.println("Register user");
@@ -210,8 +214,19 @@ public class AdminManager {
 
     }
 
-    //TODO
-    private void consultUser(List<User> users) {
+    private void consultUser(List<User> users) throws MyException {
+        System.out.println("Information about the users registered");
+        users.forEach(user -> System.out.println("ID --> [" + user.getId() + "] " + user.getName() + " " + user.getSurname()));
+        int option = worker.askInt("Introduce the id of the user do you want to consult: ");
+        this.showUsers(users, option);
+    }
 
+    private void showUsers(List<User> users, int option) throws MyException {
+        for (User user : users) {
+            if (option <= 0 || option > users.size()) throw new MyException(MyException.WRONG_OPTION);
+            if (users.get(option - 1).getId() == user.getId()) {
+                System.out.println(user.toString());
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package hibernate;
 
 import model.Expedient;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
