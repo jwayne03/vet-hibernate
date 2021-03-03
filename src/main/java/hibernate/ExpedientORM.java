@@ -39,12 +39,8 @@ public class ExpedientORM {
 
     }
 
-    public void updateExpedient(int numberOfPets, int phone, String postalCode) {
-        Expedient expedient = new Expedient();
-        expedient.setNumberOfPets(numberOfPets);
-        expedient.setPhone(phone);
-        expedient.setPostalCode(postalCode);
-        this.hibernate.getSession().update(expedient);
-        this.hibernate.getTransaction().commit();
+    public void updateExpedient(int id, int numberOfPets, int phone, String postalCode) {
+        this.hibernate.getSession().createQuery("update Expedient set nmascotas =:" + numberOfPets
+                + " set telefono =:" + phone + " set cp =: " + postalCode + " where id =: " + id);
     }
 }

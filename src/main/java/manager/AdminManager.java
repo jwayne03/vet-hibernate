@@ -44,6 +44,7 @@ public class AdminManager {
                         this.unsubscribeRecord();
                         break;
                     case 4:
+                        // TODO
                         this.editRecord();
                         break;
                     case 5:
@@ -53,6 +54,7 @@ public class AdminManager {
                         this.unsubscribeUser(users);
                         break;
                     case 7:
+                        // TODO
                         this.editUser(users);
                         break;
                     case 8:
@@ -152,11 +154,22 @@ public class AdminManager {
         AtomicInteger count = new AtomicInteger(1);
         System.out.println("Edit record");
         if (this.expedients.isEmpty()) throw new MyException(MyException.NO_EXPEDIENTS_AVAILABLE);
-        else
-            this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toString()));
+        else this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toString()));
         int option = worker.askInt("What expedient do you want to update?");
         this.isExpedientExist(option);
-        this.checkExpedient(option);
+        if (this.checkExpedient(option)) this.updateExpedient(option);
+    }
+
+    private void updateExpedient(int option) {
+        for (Expedient expedient : this.expedients) {
+            if (this.expedients.get(option - 1).getId() == expedient.getId()) {
+                int numberOfPets = worker.askInt("How many pets do you have?");
+                int phone = worker.askInt("Introduce your phone number");
+                String postalcode = worker.askString("Introduce your postal code");
+                this.expedientORM.updateExpedient(expedient.getId(),numberOfPets, phone, postalcode);
+                return;
+            }
+        }
     }
 
     private boolean checkExpedient(int option) throws MyException {
@@ -167,7 +180,6 @@ public class AdminManager {
         }
         throw new MyException(MyException.WRONG_OPTION);
     }
-
 
     private void registerUser(List<User> users) {
         System.out.println("Register user");
@@ -200,9 +212,8 @@ public class AdminManager {
                 for (Expedient expedient : this.expedients) {
                     if (user.getId() == expedient.getId_user_up()) {
                         System.out.println(user.toString());
-                    } else {
-                        System.out.println(user.toString());
                     }
+                    return;
                 }
             }
         }
