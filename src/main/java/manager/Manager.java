@@ -19,8 +19,6 @@ public class Manager {
     private final PersonORM personORM;
 
     private final AdminManager adminManager;
-    private final AuxiliarManager auxiliarManager;
-    private final VetManager vetManager;
 
     private boolean exit;
 
@@ -31,8 +29,6 @@ public class Manager {
         this.printer = new Printer();
         this.worker = new Worker();
         this.adminManager = new AdminManager();
-        this.auxiliarManager = new AuxiliarManager();
-        this.vetManager = new VetManager();
         this.exit = false;
     }
 
@@ -69,16 +65,6 @@ public class Manager {
     }
 
     private void profile(int type, int userId) {
-        switch (type) {
-            case 1:
-//                this.auxiliarManager.mainmenu(this.users);
-                break;
-            case 2:
-                this.vetManager.mainmenu();
-                break;
-            case 3:
-                this.adminManager.mainmenu(this.users, this.exit, userId);
-                break;
-        }
+        this.adminManager.mainmenu(this.users, this.exit, userId, type);
     }
 }

@@ -50,4 +50,19 @@ public class Printer {
         System.out.println("2 - Vet");
         System.out.println("3 - Admin");
     }
+
+    public void printAuxiliaryMenu() {
+        System.out.println("What do you want to do: ");
+        System.out.println("1 - Consult records");
+        System.out.println("0 - Exit");
+    }
+
+    public void printVetMenu() {
+        System.out.println("What do you want to do: ");
+        System.out.println("1 - Consult records");
+        System.out.println("2 - Register a record");
+        System.out.println("3 - Unsubscribe a record");
+        System.out.println("4 - Edit a record");
+        System.out.println("0 - Exit");
+    }
 }

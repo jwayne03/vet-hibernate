@@ -21,6 +21,8 @@ public class AdminManager {
 
     private final List<Expedient> expedients;
 
+    private int userProfileType;
+
     public AdminManager() {
         this.expedientORM = new ExpedientORM();
         this.personORM = new PersonORM();
@@ -29,36 +31,37 @@ public class AdminManager {
         this.worker = new Worker();
     }
 
-    public void mainmenu(List<User> users, boolean exit, int userId) {
+    public void mainmenu(List<User> users, boolean exit, int userId, int type) {
+        this.userProfileType = type;
         while (!exit) {
             try {
-                this.printer.printMainMenu();
+                this.printProfileMenu(type);
                 switch (this.worker.askInt("Introduce an option: ")) {
                     case 1:
                         this.consultRecords();
                         break;
                     case 2:
-                        this.registerRecord(userId);
+                        if (this.userProfileType == 2 || this.userProfileType == 3) this.registerRecord(userId);
                         break;
                     case 3:
-                        this.unsubscribeRecord();
+                        //TODO
+                        if (this.userProfileType == 2 || this.userProfileType == 3) this.unsubscribeRecord();
                         break;
                     case 4:
-                        // TODO
-                        this.editRecord();
+                        if (this.userProfileType == 2 || this.userProfileType == 3) this.editRecord();
                         break;
                     case 5:
-                        this.registerUser(users);
+                        if (this.userProfileType == 3) this.registerUser(users);
                         break;
                     case 6:
-                        this.unsubscribeUser(users);
+                        //TODO
+                        if (this.userProfileType == 3) this.unsubscribeUser(users);
                         break;
                     case 7:
-                        // TODO
-                        this.editUser(users);
+                        if (this.userProfileType == 3) this.editUser(users);
                         break;
                     case 8:
-                        this.consultUser(users);
+                        if (this.userProfileType == 3) this.consultUser(users);
                         break;
                     case 0:
                         this.printer.printExit();
@@ -70,6 +73,22 @@ public class AdminManager {
             } catch (MyException e) {
                 System.out.println(e.getMessage());
             }
+        }
+    }
+
+    private void printProfileMenu(int type) {
+        switch (type) {
+            case 1:
+                this.printer.printAuxiliaryMenu();
+                break;
+            case 2:
+                this.printer.printVetMenu();
+                break;
+            case 3:
+                this.printer.printMainMenu();
+                break;
+            default:
+                break;
         }
     }
 
@@ -153,7 +172,8 @@ public class AdminManager {
         AtomicInteger count = new AtomicInteger(1);
         System.out.println("Edit record");
         if (this.expedients.isEmpty()) throw new MyException(MyException.NO_EXPEDIENTS_AVAILABLE);
-        else this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toString()));
+        else
+            this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toString()));
         int option = worker.askInt("What expedient do you want to update?");
         this.isExpedientExist(option);
         if (this.checkExpedient(option)) this.updateExpedient(option);
@@ -260,5 +280,13 @@ public class AdminManager {
                 System.out.println(user.toString());
             }
         }
+    }
+
+    public int getUserProfileType() {
+        return userProfileType;
+    }
+
+    public void setUserProfileType(int userProfileType) {
+        this.userProfileType = userProfileType;
     }
 }

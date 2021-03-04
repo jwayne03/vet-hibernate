@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class Worker {
+public class Worker implements WorkerInterface{
 
+    @Override
     public String askString(String message) {
         BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
         String answer = "";
@@ -22,6 +23,7 @@ public class Worker {
         return answer;
     }
 
+    @Override
     public String askStringToLowerCase(String message) {
         BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
         String answer = "";
@@ -38,6 +40,7 @@ public class Worker {
         return answer;
     }
 
+    @Override
     public String askStringToUpperCase(String message) {
         BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
         String answer = "";
@@ -53,6 +56,7 @@ public class Worker {
         return answer;
     }
 
+    @Override
     public String askString(String message, String a, String b) {
         BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
         String answer = "";
@@ -65,13 +69,15 @@ public class Worker {
         return answer;
     }
 
-    private boolean wordIsOk(String word, ArrayList<String> wordsAccepted) {
+    @Override
+    public boolean wordIsOk(String word, ArrayList<String> wordsAccepted) {
         for (String w : wordsAccepted) {
             if (w.equalsIgnoreCase(word)) return true;
         }
         return false;
     }
 
+    @Override
     public int askInt(String message) {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int num = 0;
@@ -93,6 +99,7 @@ public class Worker {
         return num;
     }
 
+    @Override
     public double askDouble(String message) {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         double num = 0;
@@ -113,6 +120,7 @@ public class Worker {
         return num;
     }
 
+    @Override
     public double askDouble(String message, int min, int max) {
         double num;
         do {
