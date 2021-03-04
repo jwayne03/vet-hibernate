@@ -142,29 +142,33 @@ public class AdminManager {
     private void unsubscribeRecord() throws MyException {
         this.showUsers();
         System.out.println("What expedient do you want to unsubscribe? ");
-        int option = worker.askInt("Introdice the expedient do you want to remove: ");
-        this.isExpedientExist(option);
-        this.expedientORM.deleteExpedient();
-        this.removeExpedient(option);
+        int option = worker.askInt("Introduce the expedient do you want to remove: ");
+        if (this.isExpedientExist(option)) {
+            this.expedientORM.deleteExpedient();
+            int user_id = this.removeExpedient(option);
+            System.out.println(user_id);
+        } else {
+            return;
+        }
     }
 
     private boolean isExpedientExist(int option) throws MyException {
         for (Expedient expedient : this.expedients) {
-            if (expedient.getId() == this.expedients.get(option - 1).getId()) {
-                System.out.println(this.expedients.get(option - 1));
+            if (this.expedients.get(option - 1).getId() == expedient.getId()) {
+                System.out.println(expedient.getId());
                 return true;
             }
         }
         throw new MyException(MyException.THIS_EXPEDIENT_DOESNT_EXIST);
     }
 
-    private void removeExpedient(int option) throws MyException {
+    private int removeExpedient(int option) throws MyException {
         for (Expedient expedient : this.expedients) {
             if (expedient.getId() == option) {
-                this.expedients.remove(expedient.getId());
-                return;
-            } else throw new MyException(MyException.THIS_EXPEDIENT_DOESNT_EXIST);
+                return expedient.getId();
+            }
         }
+        throw new MyException(MyException.THIS_EXPEDIENT_DOESNT_EXIST);
     }
 
     // TODO
