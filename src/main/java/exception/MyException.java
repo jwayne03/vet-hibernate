@@ -9,6 +9,7 @@ public class MyException extends Exception {
     public static final int THIS_EXPEDIENT_DOESNT_EXIST = 1;
     public static final int WRONG_OPTION = 2;
     public static final int NO_EXPEDIENTS_AVAILABLE = 3;
+    public static final int PASSWORD_INCORRECT = 4;
 
     private final int value;
 
@@ -21,7 +22,8 @@ public class MyException extends Exception {
             "This expedient doesn't exist",
             "Wrong option, please chose someone where is in the range",
             "This user doesn't have expedients registered",
-            "There are not expedients right now"
+            "There are not expedients right now",
+            "The password is incorrect, please try again."
     );
 
     @Override

@@ -44,4 +44,10 @@ public class Printer {
     public void printExit() {
         System.out.println("You choose to exit. Goodbye!");
     }
+
+    public void printTypes() {
+        System.out.println("1 - Auxiliary");
+        System.out.println("2 - Vet");
+        System.out.println("3 - Admin");
+    }
 }

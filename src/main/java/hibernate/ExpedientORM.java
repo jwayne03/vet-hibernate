@@ -2,7 +2,6 @@ package hibernate;
 
 import model.Expedient;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
@@ -39,8 +38,11 @@ public class ExpedientORM {
 
     }
 
-    public void updateExpedient(int id, int numberOfPets, int phone, String postalCode) {
-        this.hibernate.getSession().createQuery("update Expedient set nmascotas =:" + numberOfPets
-                + " set telefono =:" + phone + " set cp =: " + postalCode + " where id =: " + id);
+    public void updateExpedient(Expedient expedient, int numberOfPets, int phone, String postalCode) {
+        expedient.setNumberOfPets(numberOfPets);
+        expedient.setPostalCode(postalCode);
+        expedient.setPhone(phone);
+        this.hibernate.getSession().update(expedient);
+        this.hibernate.getTransaction().commit();
     }
 }

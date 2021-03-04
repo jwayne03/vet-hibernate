@@ -17,7 +17,7 @@ public class PersonORM {
         return this.hibernate.getSession().createQuery("FROM User", User.class).getResultList();
     }
 
-    public void insertNewUser(int id, String name, String surname, String dni, String personal_tuition, String password, int userType, Date lastaccess) {
+    public void insertNewUser(int id, String name, String surname, String dni, String personal_tuition, String password, int userType) {
         this.hibernate.getSessionFactory().openSession().beginTransaction();
         User user = new User();
         user.setId(id);
@@ -32,9 +32,15 @@ public class PersonORM {
         this.hibernate.getTransaction().commit();
     }
 
-
     //TODO
     public void deletePerson() {
 
+    }
+
+    public void updateUser(User user, int type, String password) {
+        user.setUserType(type);
+        user.setPassword(password);
+        this.hibernate.getSession().update(user);
+        this.hibernate.getTransaction().commit();
     }
 }

@@ -78,7 +78,6 @@ public class AdminManager {
         System.out.println("What record do you want to consult?");
         this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toStringIdNameSurname()));
         int option = worker.askInt("What expedient do you want to see?");
-
         this.showExpedient(option);
     }
 
@@ -166,7 +165,7 @@ public class AdminManager {
                 int numberOfPets = worker.askInt("How many pets do you have?");
                 int phone = worker.askInt("Introduce your phone number");
                 String postalcode = worker.askString("Introduce your postal code");
-                this.expedientORM.updateExpedient(expedient.getId(),numberOfPets, phone, postalcode);
+                this.expedientORM.updateExpedient(expedient, numberOfPets, phone, postalcode);
                 return;
             }
         }
@@ -193,7 +192,7 @@ public class AdminManager {
     }
 
     private void addUser(List<User> users, String name, String surname, String dni, String tuition, String password, int type) {
-        this.personORM.insertNewUser(users.size() + 1, name, surname, dni, tuition, password, type, null);
+        this.personORM.insertNewUser(users.size() + 1, name, surname, dni, tuition, password, type);
         users.add(new User(users.size() + 1, name, surname, dni, tuition, password, type, null));
     }
 
@@ -204,7 +203,7 @@ public class AdminManager {
         this.removeUser(users, option);
     }
 
-    // TODO: delete user and if has an expedient give to the person who registered that user
+    // TODO: delete the user and check if has an expedient to give to the person who registered that user
     private void removeUser(List<User> users, int option) throws MyException {
         for (User user : users) {
             if (option <= 0 || option > users.size()) throw new MyException(MyException.WRONG_OPTION);
@@ -219,10 +218,32 @@ public class AdminManager {
         }
     }
 
-    // TODO
-    private void editUser(List<User> users) {
+    private void editUser(List<User> users) throws MyException {
         users.forEach(user -> System.out.println("ID --> [" + user.getId() + "] " + user.getName() + " " + user.getSurname()));
+        int option = worker.askInt("Introduce the the user do you want to modify: ");
+        this.printer.printTypes();
 
+        for (User user : users) {
+            if (option <= 0 || option > users.size()) throw new MyException(MyException.WRONG_OPTION);
+            this.findUserByIdUpdate(users, option, user);
+        }
+    }
+
+    private void findUserByIdUpdate(List<User> users, int option, User user) throws MyException {
+        if (users.get(option - 1).getId() == user.getId()) {
+            int type = worker.askInt("Introduce the user type");
+            String password = worker.askString("Introduce your the new password:");
+            String confirmPassword = worker.askString("Confirm the new password:");
+
+            this.confirmPassword(user, type, password, confirmPassword);
+        }
+    }
+
+    private boolean confirmPassword(User user, int type, String password, String confirmPassword) throws MyException {
+        if (password.equals(confirmPassword)) {
+            this.personORM.updateUser(user, type, password);
+            return true;
+        } else throw new MyException(MyException.PASSWORD_INCORRECT);
     }
 
     private void consultUser(List<User> users) throws MyException {
