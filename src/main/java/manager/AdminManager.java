@@ -8,6 +8,8 @@ import model.User;
 import utils.Printer;
 import worker.Worker;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,8 +33,11 @@ public class AdminManager {
         this.worker = new Worker();
     }
 
-    public void mainmenu(List<User> users, boolean exit, int userId, int type) {
+
+
+    public void mainmenu(List<User> users, boolean exit, int userId, int type, User user) {
         this.userProfileType = type;
+        this.personORM.updateSessionUser(user);
         while (!exit) {
             try {
                 this.printProfileMenu(type);
@@ -44,7 +49,6 @@ public class AdminManager {
                         if (this.userProfileType == 2 || this.userProfileType == 3) this.registerRecord(userId);
                         break;
                     case 3:
-                        //TODO
                         if (this.userProfileType == 2 || this.userProfileType == 3) this.unsubscribeRecord();
                         break;
                     case 4:
@@ -54,7 +58,6 @@ public class AdminManager {
                         if (this.userProfileType == 3) this.registerUser(users);
                         break;
                     case 6:
-                        //TODO
                         if (this.userProfileType == 3) this.unsubscribeUser(users);
                         break;
                     case 7:
@@ -94,6 +97,7 @@ public class AdminManager {
 
     private void consultRecords() throws MyException {
         AtomicInteger count = new AtomicInteger(1);
+        if (this.expedients.isEmpty()) throw new MyException(MyException.NO_EXPEDIENTS_AVAILABLE);
         System.out.println("What record do you want to consult?");
         this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toStringIdNameSurname()));
         int option = worker.askInt("What expedient do you want to see?");
@@ -142,17 +146,20 @@ public class AdminManager {
     private void unsubscribeRecord() throws MyException {
         this.showUsers();
         System.out.println("What expedient do you want to unsubscribe? ");
-        int option = worker.askInt("Introduce the expedient do you want to remove: ");
+        int option = worker.askInt("Introduce the expedient ID do you want to remove: ");
+        if (option < 0 || option > this.expedients.size()) throw new MyException(MyException.WRONG_OPTION);
+
         if (this.isExpedientExist(option)) {
-            this.expedientORM.deleteExpedient();
-            int user_id = this.removeExpedient(option);
-            System.out.println(user_id);
+            int id = this.removeExpedient(option);
+            this.expedientORM.deleteExpedient(id);
+            this.removeExpedientFromMemoryById(id);
         } else {
             return;
         }
     }
 
     private boolean isExpedientExist(int option) throws MyException {
+        if (option < 0 || option > this.expedients.size()) throw new MyException(MyException.WRONG_OPTION);
         for (Expedient expedient : this.expedients) {
             if (this.expedients.get(option - 1).getId() == expedient.getId()) {
                 System.out.println(expedient.getId());
@@ -162,9 +169,18 @@ public class AdminManager {
         throw new MyException(MyException.THIS_EXPEDIENT_DOESNT_EXIST);
     }
 
+    private void removeExpedientFromMemoryById(int id) {
+        for (Expedient expedient : this.expedients) {
+            if (expedient.getId() == id) {
+                this.expedients.remove(expedient.getId());
+                return;
+            }
+        }
+    }
+
     private int removeExpedient(int option) throws MyException {
         for (Expedient expedient : this.expedients) {
-            if (expedient.getId() == option) {
+            if (expedient.getId() == this.expedients.get(option - 1).getId()) {
                 return expedient.getId();
             }
         }
@@ -175,9 +191,11 @@ public class AdminManager {
     private void editRecord() throws MyException {
         AtomicInteger count = new AtomicInteger(1);
         System.out.println("Edit record");
-        if (this.expedients.isEmpty()) throw new MyException(MyException.NO_EXPEDIENTS_AVAILABLE);
-        else
+        if (this.expedients.isEmpty()) {
+            throw new MyException(MyException.NO_EXPEDIENTS_AVAILABLE);
+        } else {
             this.expedients.forEach(expedient -> System.out.println(count.getAndIncrement() + " - " + expedient.toString()));
+        }
         int option = worker.askInt("What expedient do you want to update?");
         this.isExpedientExist(option);
         if (this.checkExpedient(option)) this.updateExpedient(option);
@@ -224,19 +242,33 @@ public class AdminManager {
         int count = 1;
         for (User user : users) System.out.println(count++ + " - " + user.toString());
         int option = worker.askInt("What user do you want to delete?");
-        this.removeUser(users, option);
+        int user_id = this.searchUser(users, option);
+        this.removeUser(users, user_id, option);
     }
 
-    // TODO: delete the user and check if has an expedient to give to the person who registered that user
-    private void removeUser(List<User> users, int option) throws MyException {
+    private int searchUser(List<User> users, int option) throws MyException {
         for (User user : users) {
-            if (option <= 0 || option > users.size()) throw new MyException(MyException.WRONG_OPTION);
             if (users.get(option - 1).getId() == user.getId()) {
-                for (Expedient expedient : this.expedients) {
-                    if (user.getId() == expedient.getId_user_up()) {
-                        System.out.println(user.toString());
+                return user.getId();
+            }
+        }
+        throw new MyException(MyException.USER_NOT_EXIST);
+    }
+
+    private void removeUser(List<User> users, int user_id, int option) throws MyException {
+        for (User user : users) {
+            if (option < 0 || option > users.size()) throw new MyException(MyException.WRONG_OPTION);
+            if (user.getId() == user_id) {
+                if (!this.expedients.isEmpty()) {
+                    for (Expedient expedient : this.expedients) {
+                        if (user_id == expedient.getId_user_up()) {
+                            throw new MyException(MyException.USER_CANT_DELETE);
+                        } else {
+                            System.out.println(user.toString());
+                        }
                     }
-                    return;
+                } else {
+                    throw new MyException(MyException.NO_EXPEDIENTS_AVAILABLE);
                 }
             }
         }
@@ -258,7 +290,6 @@ public class AdminManager {
             int type = worker.askInt("Introduce the user type");
             String password = worker.askString("Introduce your the new password:");
             String confirmPassword = worker.askString("Confirm the new password:");
-
             this.confirmPassword(user, type, password, confirmPassword);
         }
     }
@@ -284,13 +315,5 @@ public class AdminManager {
                 System.out.println(user.toString());
             }
         }
-    }
-
-    public int getUserProfileType() {
-        return userProfileType;
-    }
-
-    public void setUserProfileType(int userProfileType) {
-        this.userProfileType = userProfileType;
     }
 }

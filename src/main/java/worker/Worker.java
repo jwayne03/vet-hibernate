@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class Worker implements WorkerInterface{
+public class Worker implements WorkerInterface {
 
     @Override
     public String askString(String message) {

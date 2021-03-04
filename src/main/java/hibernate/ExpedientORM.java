@@ -34,8 +34,15 @@ public class ExpedientORM {
         this.hibernate.getTransaction().commit();
     }
 
-    public void deleteExpedient() {
+    public void deleteExpedient(int id) {
+        Expedient expedient = this.hibernate.getSession().get(Expedient.class, id);
 
+        if (expedient != null) {
+            this.hibernate.getSession().delete(expedient);
+            System.out.println("The expedient has been deleted successfully");
+        }
+        
+        this.hibernate.getTransaction().commit();
     }
 
     public void updateExpedient(Expedient expedient, int numberOfPets, int phone, String postalCode) {
