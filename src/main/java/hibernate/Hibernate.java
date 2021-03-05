@@ -31,18 +31,6 @@ public class Hibernate {
         this.transaction = this.session.beginTransaction();
     }
 
-    public StandardServiceRegistryBuilder getServiceRegistryBuilder() {
-        return serviceRegistryBuilder;
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public ServiceRegistry getServiceRegistry() {
-        return serviceRegistry;
-    }
-
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }

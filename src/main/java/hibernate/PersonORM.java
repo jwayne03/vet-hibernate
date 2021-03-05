@@ -2,7 +2,6 @@ package hibernate;
 
 import model.User;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -33,9 +32,9 @@ public class PersonORM {
         this.hibernate.getTransaction().commit();
     }
 
-    //TODO
-    public void deletePerson() {
-        System.out.println("borrado");
+    public void deletePerson(User user) {
+//        this.hibernate.getSession().delete(user);
+//        this.hibernate.getSession().getTransaction().commit();
     }
 
     public void updateUser(User user, int type, String password) {

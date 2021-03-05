@@ -8,8 +8,6 @@ import model.User;
 import utils.Printer;
 import worker.Worker;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,7 +31,8 @@ public class AdminManager {
         this.worker = new Worker();
     }
 
-    public void mainmenu(List<User> users, boolean exit, int userId, int type, User user) {
+    public void mainmenu(List<User> users, boolean exit, int userId, int type, User user, String username) {
+        System.out.println("Welcome " + username);
         this.userProfileType = type;
         this.personORM.updateSessionUser(user);
         while (!exit) {
@@ -56,7 +55,7 @@ public class AdminManager {
                         if (this.userProfileType == 3) this.registerUser(users);
                         break;
                     case 6:
-                        if (this.userProfileType == 3) this.unsubscribeUser(users);
+                        if (this.userProfileType == 3) this.unsubscribeUser(users, username);
                         break;
                     case 7:
                         if (this.userProfileType == 3) this.editUser(users);
@@ -185,7 +184,6 @@ public class AdminManager {
         throw new MyException(MyException.THIS_EXPEDIENT_DOESNT_EXIST);
     }
 
-    // TODO
     private void editRecord() throws MyException {
         AtomicInteger count = new AtomicInteger(1);
         System.out.println("Edit record");
@@ -236,12 +234,12 @@ public class AdminManager {
         users.add(new User(users.size() + 1, name, surname, dni, tuition, password, type, null));
     }
 
-    private void unsubscribeUser(List<User> users) throws MyException {
+    private void unsubscribeUser(List<User> users, String username) throws MyException {
         int count = 1;
         for (User user : users) System.out.println(count++ + " - " + user.toString());
         int option = worker.askInt("What user do you want to delete?");
         int user_id = this.searchUser(users, option);
-        this.removeUser(users, user_id, option);
+        this.removeUser(users, user_id, option, username);
     }
 
     private int searchUser(List<User> users, int option) throws MyException {
@@ -253,7 +251,7 @@ public class AdminManager {
         throw new MyException(MyException.USER_NOT_EXIST);
     }
 
-    private void removeUser(List<User> users, int user_id, int option) throws MyException {
+    private void removeUser(List<User> users, int user_id, int option, String username) throws MyException {
         for (User user : users) {
             if (option < 0 || option > users.size()) throw new MyException(MyException.WRONG_OPTION);
             if (user.getId() == user_id) {
@@ -262,11 +260,11 @@ public class AdminManager {
                         if (user_id == expedient.getId_user_up()) {
                             throw new MyException(MyException.USER_CANT_DELETE);
                         } else {
-                            System.out.println(user.toString());
+                            this.personORM.deletePerson(user);
                         }
                     }
                 } else {
-                    throw new MyException(MyException.NO_EXPEDIENTS_AVAILABLE);
+                    this.personORM.deletePerson(user);
                 }
             }
         }

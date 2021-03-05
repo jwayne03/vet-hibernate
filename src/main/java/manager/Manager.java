@@ -50,7 +50,8 @@ public class Manager {
                 String user = worker.askString("Introduce your user: ");
                 String password = worker.askString("Introduce your password");
                 User user1 = checkUser(user, password);
-                this.profile(user1.getUserType(), user1.getId(), user1);
+                String name = user1.getName();
+                this.profile(user1.getUserType(), user1.getId(), user1, name);
             } catch (MyException e) {
                 System.out.println(e.getMessage());
             }
@@ -63,7 +64,7 @@ public class Manager {
         throw new MyException(MyException.USER_PASS_INCORRECT);
     }
 
-    private void profile(int type, int userId, User user1) {
-        this.adminManager.mainmenu(this.users, this.exit, userId, type, user1);
+    private void profile(int type, int userId, User user1, String name) {
+        this.adminManager.mainmenu(this.users, this.exit, userId, type, user1, name);
     }
 }
