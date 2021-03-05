@@ -33,8 +33,6 @@ public class AdminManager {
         this.worker = new Worker();
     }
 
-
-
     public void mainmenu(List<User> users, boolean exit, int userId, int type, User user) {
         this.userProfileType = type;
         this.personORM.updateSessionUser(user);

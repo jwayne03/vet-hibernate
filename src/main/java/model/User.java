@@ -24,7 +24,7 @@ public class User {
     private String password;
     @Column(name = "tipousuario")
     private int userType;
-    @Column(name = "ultimoacceso", insertable = false, updatable = false)
+    @Column(name = "ultimoacceso")
     private Date lastaccess;
 
     public User() {
